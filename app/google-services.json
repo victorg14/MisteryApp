@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "256469111887",
+    "project_id": "detectivedigital-70c43",
+    "storage_bucket": "detectivedigital-70c43.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:256469111887:android:819d8e2cf5d65fb709063a",
+        "android_client_info": {
+          "package_name": "com.example.mistery_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYBtmefUgzY_kWzQP640-c6qTniZaIbP0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

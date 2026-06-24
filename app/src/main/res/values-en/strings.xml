@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="formato_pista">💡 Hint: %1$s</string>
+    <string name="formato_progreso_pregunta">Question %1$d of %2$d</string>
+    <string name="siguiente">Next</string>
+    <string name="finalizar">Finish</string>
+    <string name="error_seleccionar_opcion">❌ You must choose an option before continuing.</string>
+    <string name="error_sesion_invalida">Error: Invalid session</string>
+    <string name="misterio_completado">You have already answered all questions correctly!</string>
+    <string name="error_red">Network error during initialization</string>
+    <string name="sincronizacion_exitosa">Mystery Synchronized and Evaluated Successfully</string>
+    <string name="error_guardar_progreso">Error saving progress to the server</string>
+</resources>

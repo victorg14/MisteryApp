@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mystery_dark">#121212</color>
+    <color name="mystery_navy">#1A1A2E</color>
+    <color name="mystery_accent">#E94560</color>
+    <color name="mystery_gold">#C19A6B</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0B0B0</color>
+    <color name="overlay_dark">#CC000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+</resources>

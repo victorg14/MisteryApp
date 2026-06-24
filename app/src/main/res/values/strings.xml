@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Detective Digital</string>
+    <string name="login_title">CENTRAL DE INTELIGENCIA</string>
+    <string name="email_hint">Identificador de Agente (Email)</string>
+    <string name="password_hint">Código de Acceso</string>
+    <string name="btn_login">INICIAR MISIÓN</string>
+    <string name="go_to_register">¿Nuevo recluta? Crea un perfil aquí</string>
+
+    <!-- Pantalla Principal -->
+    <string name="main_title">ARCHIVOS SECRETOS</string>
+    <string name="main_subtitle">Agente, el misterio le espera...</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+
+    <string name="formato_pista">💡 Pista: %1$s</string>
+    <string name="formato_progreso_pregunta">Pregunta %1$d de %2$d</string>
+    <string name="siguiente">Siguiente</string>
+    <string name="finalizar">Finalizar</string>
+    <string name="error_seleccionar_opcion">❌ Debes elegir una opción antes de continuar.</string>
+    <string name="error_sesion_invalida">Error: Sesión no válida</string>
+    <string name="misterio_completado">¡Ya has respondido correctamente todas las preguntas!</string>
+    <string name="error_red">Error de red al inicializar</string>
+    <string name="sincronizacion_exitosa">Misterio Sincronizado Evaluado con Éxito</string>
+    <string name="error_guardar_progreso">Error al guardar progreso en el servidor</string>
+</resources>
