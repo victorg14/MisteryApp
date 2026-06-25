@@ -38,7 +38,7 @@ public class ClasificacionesFragment extends Fragment {
 
         adapter = new RankingAdapter(listaRanking);
         recyclerView.setAdapter(adapter);
-        Toast.makeText(getContext(), "En fragment Clasificaciones", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "En fragment Clasificaciones", Toast.LENGTH_SHORT).show();
 
         return view;
     }

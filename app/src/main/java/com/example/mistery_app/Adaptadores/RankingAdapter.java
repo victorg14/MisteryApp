@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide; // 👈 Asegúrate de tener la dependencia de Glide
 import com.example.mistery_app.R;
 import com.example.mistery_app.modelos.RankingUser;
 import java.util.Locale;
@@ -33,22 +34,30 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
         RankingUser user = listaRanking.get(position);
         int puesto = position + 1;
 
-        // 1. Asignar el puesto en el ranking
+        //Asignar el puesto en el ranking
         holder.txtPuesto.setText(String.format(Locale.getDefault(), "#%d", puesto));
 
-        // 2. Asignar nombre del usuario
+        //Asignar nombre del usuario
         holder.txtNombre.setText(user.getNombre());
 
-        // 3. Asignar cantidad de misterios resueltos (basado en el alias de Laravel)
+        // Asignar cantidad de misterios resueltos
         holder.txtResueltos.setText(String.format(Locale.getDefault(), "Misterios Completos: %d", user.getMisteriosResueltos()));
 
-        // 4. Asignar el promedio de eficiencia formateado a dos decimales
+        //Asignar el promedio de eficiencia formateado a dos decimales
         holder.txtPorcentaje.setText(String.format(Locale.getDefault(), "%.2f%%", user.getPromedioEficiencia()));
 
-        // Imagen por defecto por ahora
-        holder.imgPerfil.setImageResource(R.drawable.img1);
+        //CARGAR IMAGEN DE PERFIL ASÍNCRONA CON GLIDE
 
-        // 5. Detalle estético: Resaltar los colores del podio de forma segura
+        String photoUrl = user.getFoto();
+
+        Glide.with(holder.itemView.getContext())
+                .load(photoUrl != null && !photoUrl.isEmpty() ? photoUrl : R.drawable.img1) // Si no hay URL, usa la de por defecto
+                .circleCrop()
+                .placeholder(R.drawable.img1)
+                .error(R.drawable.img1)
+                .into(holder.imgPerfil);
+
+        //Detalle estético: Resaltar los colores del podio de forma segura
         switch (puesto) {
             case 1:
                 holder.txtPuesto.setTextColor(Color.parseColor("#FFD700")); // Oro
@@ -77,8 +86,6 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtPuesto = itemView.findViewById(R.id.txtPuesto);
-
-            // Asegúrate de que estos IDs existan exactamente así en tu archivo layout 'item_ranking.xml'
             txtNombre = itemView.findViewById(R.id.txtNombreRanking);
             txtResueltos = itemView.findViewById(R.id.txtResueltosRanking);
             txtPorcentaje = itemView.findViewById(R.id.txtPorcentajeRanking);

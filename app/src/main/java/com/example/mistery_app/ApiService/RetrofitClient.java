@@ -1,6 +1,7 @@
 package com.example.mistery_app.ApiService;
 
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Retrofit;
@@ -12,9 +13,12 @@ public class RetrofitClient {
     public static ApiService getApiService() {
         if (retrofit == null) {
 
-            // Configuración del OkHttpClient con ambos interceptores
             OkHttpClient client = new OkHttpClient.Builder()
-                    // 1. Interceptor para el Idioma y Headers básicos (Tu código actual)
+                    .connectTimeout(30, TimeUnit.SECONDS) // Tiempo máximo para establecer conexión
+                    .readTimeout(60, TimeUnit.SECONDS)    // Tiempo máximo para esperar la respuesta de Laravel
+                    .writeTimeout(60, TimeUnit.SECONDS)   // Tiempo máximo para subir datos/imágenes
+
+
                     .addInterceptor(chain -> {
                         Request original = chain.request();
                         String idiomaDispositivo = Locale.getDefault().getLanguage();
@@ -26,7 +30,7 @@ public class RetrofitClient {
                                 .build();
                         return chain.proceed(request);
                     })
-                    // 2. Agregamos tu nuevo interceptor para el UID de Firebase
+
                     .addInterceptor(new FirebaseUidInterceptor())
                     .build();
 

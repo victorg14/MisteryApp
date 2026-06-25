@@ -8,8 +8,11 @@ public class Comentario {
     @SerializedName("publicacion_id")
     private int publicacionId;
 
-    @SerializedName("usuario_id") // Cambiado de String 'usuario' a int 'usuario_id'
+    @SerializedName("usuario_id")
     private int usuarioId;
+
+    @SerializedName("usuario_nombre")
+    private String usuarioNombre;
 
     private String comentario;
 
@@ -34,6 +37,9 @@ public class Comentario {
 
     public int getUsuarioId() { return usuarioId; }
     public void setUsuarioId(int usuarioId) { this.usuarioId = usuarioId; }
+
+    public String getUsuarioNombre() { return usuarioNombre; }
+    public void setUsuarioNombre(String usuarioNombre) { this.usuarioNombre = usuarioNombre; }
 
     public String getComentario() { return comentario; }
     public void setComentario(String comentario) { this.comentario = comentario; }

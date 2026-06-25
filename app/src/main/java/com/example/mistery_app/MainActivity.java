@@ -26,36 +26,29 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class MainActivity extends AppCompatActivity {
 
     private ImageView imgPerfil;
     private FrameLayout userPanelContainer;
     private View overlay;
-
     private BottomNavigationView navigationView;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private String firebaseUid = "";
 
-    // Constantes para la configuración del idioma persistente
+    private TextInputLayout layoutFiltro;
+    private AutoCompleteTextView spinnerFiltroCategoria;
+    String[] opcionesFiltro = {"Todos los Casos","Crimen", "Lógica", "Terror", "Historia", "Ciencia Ficcion"};
+
     private static final String PREF_NAME = "ConfiguracionApp";
     private static final String KEY_IDIOMA = "idioma_seleccionado";
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        // 🛠️ Aplica el idioma guardado antes de que se infle la Activity para evitar parpadeos
-        SharedPreferences prefs = newBase.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        String idioma = prefs.getString(KEY_IDIOMA, Locale.getDefault().getLanguage());
-
-        Locale locale = new Locale(idioma);
-        Locale.setDefault(locale);
-
-        Configuration config = new Configuration();
-        config.setLocale(locale);
-
-        Context context = newBase.createConfigurationContext(config);
-        super.attachBaseContext(context);
+        super.attachBaseContext(newBase);
     }
 
     @Override
@@ -64,52 +57,50 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // Inicializaciones de Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Enlace de vistas
         imgPerfil = findViewById(R.id.imgPerfil);
         userPanelContainer = findViewById(R.id.userPanelContainer);
         overlay = findViewById(R.id.viewOverlay);
 
-        // Carga inicial de datos
+        layoutFiltro = findViewById(R.id.layoutFiltro);
+        spinnerFiltroCategoria = findViewById(R.id.spinnerFiltroCategoria);
+        configurarFiltroDeCategorias();
+
         loadProfileImage();
 
-        // Configuración de Navegación Inferior
         navigationView = findViewById(R.id.menuBotton);
         loadFragment(new HomeFragment());
 
         navigationView.setOnItemSelectedListener(item -> {
             item.setCheckable(true);
             if (item.getItemId() == R.id.home) {
-                Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
+                reiniciarFiltroCategoria();
+                layoutFiltro.setVisibility(View.VISIBLE);
                 loadFragment(new HomeFragment());
                 return true;
             } else if (item.getItemId() == R.id.Agregar) {
-                Toast.makeText(this, "agregar", Toast.LENGTH_SHORT).show();
+                layoutFiltro.setVisibility(View.GONE);
                 loadFragment(new NewMisteryFragment());
                 return true;
-            }else if (item.getItemId() == R.id.Clasificacion) {
-//                Toast.makeText(this, "Tops", Toast.LENGTH_SHORT).show();
+            } else if (item.getItemId() == R.id.Clasificacion) {
+                layoutFiltro.setVisibility(View.GONE);
                 loadFragment(new ClasificacionesFragment());
                 return true;
             }
             return false;
         });
 
-        // 🎯 Evento Click en la Imagen de Perfil (Despliega el menú lateral fusionado)
+
         imgPerfil.setOnClickListener(v -> {
+
             overlay.setVisibility(View.VISIBLE);
             userPanelContainer.setVisibility(View.VISIBLE);
-
-            // Cargamos el PerfilFragment fusionado pasándole el callback para cerrar el menú lateral
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.userPanelContainer, new PerfilFragment(this::cerrarPanelUsuario))
                     .commit();
-
-            // Animación lateral de entrada (Slide-In)
             userPanelContainer.post(() -> {
                 userPanelContainer.setTranslationX(userPanelContainer.getWidth());
                 userPanelContainer.animate()
@@ -117,12 +108,10 @@ public class MainActivity extends AppCompatActivity {
                         .setDuration(300)
                         .start();
             });
+
         });
 
-        // Fondo oscuro para cerrar el panel
         overlay.setOnClickListener(v -> cerrarPanelUsuario());
-
-        // Control de barras de sistema (Edge-To-Edge padding)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -130,10 +119,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void configurarFiltroDeCategorias() {
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                opcionesFiltro
+        );
+        spinnerFiltroCategoria.setAdapter(adapter);
+
+        spinnerFiltroCategoria.setText(opcionesFiltro[0], false);
+
+        spinnerFiltroCategoria.setOnItemClickListener((parent, view, position, id) -> {
+            String categoriaSeleccionada = (String) parent.getItemAtPosition(position);
+
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerMain);
+            if (currentFragment instanceof HomeFragment) {
+
+                ((HomeFragment) currentFragment).filtrarMisteriosPorCategoria(categoriaSeleccionada);
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        // Recargar la foto por si cambió tras volver de otra vista
         loadProfileImage();
     }
 
@@ -146,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
                             Log.e("PROFILE_DEBUG", "Error al escuchar cambios", e);
                             return;
                         }
-
                         if (!isDestroyed() && documentSnapshot != null && documentSnapshot.exists()) {
                             String photoUrl = documentSnapshot.getString("photoUrl");
 
@@ -165,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cerrarPanelUsuario() {
-        // Animación lateral de salida (Slide-Out)
         userPanelContainer.animate()
                 .translationX(userPanelContainer.getWidth())
                 .setDuration(300)
@@ -181,5 +189,23 @@ public class MainActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.containerMain, fragment)
                 .commit();
+    }
+
+    public void reiniciarFiltroCategoria() {
+        if (spinnerFiltroCategoria != null) {
+            spinnerFiltroCategoria.setText("Todos los Casos", false);
+            spinnerFiltroCategoria.setSelection(0);
+        }
+    }
+
+    public void ocultarfiltro(boolean BOOL){
+
+        if (BOOL){
+            layoutFiltro.setVisibility(View.GONE);
+        }else {
+            layoutFiltro.setVisibility(View.VISIBLE);
+        }
+
+
     }
 }

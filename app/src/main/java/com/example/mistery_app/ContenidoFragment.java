@@ -15,8 +15,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 import com.example.mistery_app.ApiService.RetrofitClient;
 import com.example.mistery_app.modelos.Misterio;
+import com.example.mistery_app.MainActivity;
 import com.google.android.material.button.MaterialButton;
 
 import retrofit2.Call;
@@ -29,6 +32,8 @@ public class ContenidoFragment extends Fragment {
     private TextView txtDescripcion, txtTitulo;
     private MaterialButton btnRegresar, btnComenzar;
     private int misterio_id, publicacion_id;
+
+    private MainActivity mainActivity;
 
     private String firebaseUid = "";
 
@@ -50,7 +55,12 @@ public class ContenidoFragment extends Fragment {
         btnRegresar = view.findViewById(R.id.btnRegresar);
         btnComenzar = view.findViewById(R.id.btnComenzar);
 
-        btnRegresar.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
+        btnRegresar.setOnClickListener(v -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).ocultarfiltro(false);
+            }
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
 
         btnComenzar.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
@@ -73,7 +83,6 @@ public class ContenidoFragment extends Fragment {
             misterio_id = args.getInt("misterio_id", -1);
             publicacion_id = args.getInt("publicacion_id", -1);
 
-            // 🎯 LOGICA DE OCULTACIÓN: Si venimos desde ResolverMisterioFragment, el botón desaparece
             boolean ocultarIniciar = args.getBoolean("ocultar_iniciar", false);
             if (ocultarIniciar) {
                 btnComenzar.setVisibility(View.GONE);
@@ -103,8 +112,22 @@ public class ContenidoFragment extends Fragment {
                             txtDescripcion.setText(m.getDescripcion());
                             txtTitulo.setText(m.getTitulo());
 
-                            if (m.getImagenUri() != null) {
-                                imgContenido.setImageResource(R.drawable.img1);
+                            String imagePath = m.getImagenUri();
+                            if (imagePath != null) {
+                                if (imagePath.startsWith("http")) {
+                                    Glide.with(requireContext())
+                                            .load(imagePath)
+                                            .placeholder(R.drawable.img1)
+                                            .error(R.drawable.img1)
+                                            .into(imgContenido);
+                                } else {
+                                    int resId = getResources().getIdentifier(imagePath, "drawable", requireContext().getPackageName());
+                                    if (resId != 0) {
+                                        imgContenido.setImageResource(resId);
+                                    } else {
+                                        imgContenido.setImageResource(R.drawable.img1);
+                                    }
+                                }
                             }
 
                             if (m.getPorcentajeReal() >= 100) {

@@ -2,6 +2,7 @@ package com.example.mistery_app.ApiService;
 
 import com.example.mistery_app.modelos.Comentario;
 import com.example.mistery_app.modelos.EstadoMisterioResponse;
+import com.example.mistery_app.modelos.Insultos;
 import com.example.mistery_app.modelos.Misterio;
 import com.example.mistery_app.modelos.Publicacion;
 import com.example.mistery_app.modelos.RankingUser;
@@ -88,4 +89,6 @@ public interface ApiService {
     );
 
 
+    @GET("insultos")
+    Call<Insultos> getInsultosPorIdioma(@Query("lang") String idioma);
 }

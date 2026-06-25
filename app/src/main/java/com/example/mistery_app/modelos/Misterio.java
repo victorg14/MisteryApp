@@ -9,6 +9,7 @@ public class Misterio {
 
     private String titulo;
     private String descripcion;
+    private String categoria;
 
     @SerializedName("imagen_uri")
     private String imagenUri;
@@ -18,6 +19,14 @@ public class Misterio {
 
     @SerializedName("porcentaje_real")
     private int porcentajeReal;
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
 
     public int getPorcentajeReal() { return porcentajeReal; }
     public void setPorcentajeReal(int porcentajeReal) { this.porcentajeReal = porcentajeReal; }

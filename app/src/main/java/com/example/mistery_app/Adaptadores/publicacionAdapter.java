@@ -1,5 +1,7 @@
 package com.example.mistery_app.Adaptadores;
 
+import static android.app.PendingIntent.getActivity;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,15 +21,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.mistery_app.ApiService.RetrofitClient;
 import com.example.mistery_app.ComentariosFragment;
 import com.example.mistery_app.ContenidoFragment;
+import com.example.mistery_app.MainActivity;
 import com.example.mistery_app.R;
 import com.example.mistery_app.modelos.Misterio;
 import com.example.mistery_app.modelos.OnComentarioAgregado;
 import com.example.mistery_app.modelos.Publicacion;
-import com.google.firebase.auth.FirebaseAuth; // 🔥 Importación de Firebase Auth
-import com.google.firebase.auth.FirebaseUser; // 🔥 Importación de Firebase User
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
@@ -80,15 +84,26 @@ public class publicacionAdapter extends RecyclerView.Adapter<publicacionAdapter.
         holder.corazon.setText(isLikedLocal ? "❤️" : "🤍");
 
         if (publiMist != null) {
-            String nombreImagen = publiMist.getImagenUri();
-            int imageResId = holder.itemView.getContext()
-                    .getResources()
-                    .getIdentifier(nombreImagen, "drawable", holder.itemView.getContext().getPackageName());
+            String imagePath = publiMist.getImagenUri();
 
-            if (imageResId != 0) {
-                holder.img.setImageResource(imageResId);
+            if (imagePath != null && imagePath.startsWith("http")) {
+                // Es una URL de Cloudinary, usamos Glide para cargarla
+                Glide.with(holder.itemView.getContext())
+                        .load(imagePath)
+                        .placeholder(R.drawable.img1)
+                        .error(R.drawable.img1)
+                        .into(holder.img);
             } else {
-                holder.img.setImageResource(R.drawable.img1);
+                // Es un recurso local antiguo (ej: "img1", "img2")
+                int imageResId = holder.itemView.getContext()
+                        .getResources()
+                        .getIdentifier(imagePath, "drawable", holder.itemView.getContext().getPackageName());
+
+                if (imageResId != 0) {
+                    holder.img.setImageResource(imageResId);
+                } else {
+                    holder.img.setImageResource(R.drawable.img1);
+                }
             }
         } else {
             Log.e("ADAPTER", "No se encontró misterio con ID: " + publi.getMisterioId());
@@ -96,6 +111,10 @@ public class publicacionAdapter extends RecyclerView.Adapter<publicacionAdapter.
         }
 
         holder.img.setOnClickListener(v -> {
+
+            MainActivity mainActivity = (MainActivity) v.getContext();
+            mainActivity.ocultarfiltro(true);
+
             Animation zoomIn = AnimationUtils.loadAnimation(v.getContext(), R.anim.zoom_in);
             v.startAnimation(zoomIn);
 
@@ -128,7 +147,7 @@ public class publicacionAdapter extends RecyclerView.Adapter<publicacionAdapter.
         // 🔘 Click en el contenedor de likes modificado
         holder.layoutLikes.setOnClickListener(view -> {
 
-            // 🔥 1. Obtener el usuario actual de Firebase
+            //  Obtener el usuario actual de Firebase
             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
             if (firebaseUser == null) {
@@ -137,7 +156,7 @@ public class publicacionAdapter extends RecyclerView.Adapter<publicacionAdapter.
                 return;
             }
 
-            // 🔥 2. Extraer el UID (Es un String alfanumérico largo)
+            // Extraer el UID (Es un String alfanumérico largo)
             String firebaseUid = firebaseUser.getUid();
 
             // Invertir estado actual en la UI de inmediato (Optimistic UI)
@@ -222,5 +241,30 @@ public class publicacionAdapter extends RecyclerView.Adapter<publicacionAdapter.
             }
         }
         return null;
+    }
+
+    public void filtrarPorCategoria(String categoria, List<Publicacion> listaOriginalPublicaciones, List<Misterio> listaOriginalMisterios) {
+        if (categoria.equals("Todos los Casos")) {
+            setLista(listaOriginalPublicaciones, listaOriginalMisterios);
+            return;
+        }
+
+        java.util.ArrayList<Publicacion> publicacionesFiltradas = new java.util.ArrayList<>();
+
+        for (Publicacion pub : listaOriginalPublicaciones) {
+            Misterio mist = null;
+            for (Misterio m : listaOriginalMisterios) {
+                if (m.getId() == pub.getMisterioId()) {
+                    mist = m;
+                    break;
+                }
+            }
+
+            if (mist != null && mist.getCategoria() != null && mist.getCategoria().equalsIgnoreCase(categoria)) {
+                publicacionesFiltradas.add(pub);
+            }
+        }
+
+        setLista(publicacionesFiltradas, listaOriginalMisterios);
     }
 }

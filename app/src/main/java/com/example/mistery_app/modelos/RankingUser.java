@@ -6,6 +6,16 @@ public class RankingUser {
     @SerializedName("usuario_id") private int usuarioId;
     private String nombre;
 
+    private String foto;
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
     @SerializedName("misterios_resueltos") private int misteriosResueltos;
 
     // Cambiamos a String temporalmente para recibirlo de manera segura sin importar el formato de Laravel

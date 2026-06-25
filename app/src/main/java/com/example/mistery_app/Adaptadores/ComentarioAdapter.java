@@ -1,5 +1,8 @@
 package com.example.mistery_app.Adaptadores;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,13 +41,31 @@ public class ComentarioAdapter extends RecyclerView.Adapter<ComentarioAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // 🎯 Descomentamos y obtenemos el comentario de la posición actual
         Comentario comentarioActual = comentarios.get(position);
+        Context context = holder.itemView.getContext();
 
-        // Pasamos el texto del comentario al TextView correspondiente
         holder.comentario.setText(comentarioActual.getComentario());
 
-        holder.usuario.setText("Usuario ID: " + comentarioActual.getUsuarioId());
+        // Recuperar datos del usuario logueado desde SharedPreferences
+        SharedPreferences prefs = context.getSharedPreferences("Configuracion", Context.MODE_PRIVATE);
+        int miIdMysql = prefs.getInt("usuario_id_mysql", -1);
+        String miNombre = prefs.getString("usuario_nombre", "");
+
+        String nombreEnComentario = comentarioActual.getUsuarioNombre();
+
+        // 🔍 LOG DE DEPURACIÓN PARA TI
+        Log.d("DEBUG_COMENTARIO", "Comparando -> ID Comentario: " + comentarioActual.getUsuarioId() + " | Mi ID guardado: " + miIdMysql + " | Mi Nombre: " + miNombre);
+
+        if (nombreEnComentario != null && !nombreEnComentario.isEmpty()) {
+            // Si el servidor ya nos mandó el nombre, lo usamos
+            holder.usuario.setText(nombreEnComentario);
+        } else if (comentarioActual.getUsuarioId() == miIdMysql && !miNombre.isEmpty()) {
+            // Si el ID coincide con el mío, ponemos mi nombre guardado
+            holder.usuario.setText(miNombre);
+        } else {
+            // Si no, mostramos el ID como último recurso
+            holder.usuario.setText("Usuario: " + comentarioActual.getUsuarioId());
+        }
     }
 
     @Override

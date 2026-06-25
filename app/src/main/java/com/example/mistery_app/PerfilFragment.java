@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -115,7 +116,7 @@ public class PerfilFragment extends Fragment {
             });
         }
 
-        // --- Lógica de SharedPreferences y Cambio de Idioma ---
+
 
         sharedPreferences = requireActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
 
@@ -129,7 +130,7 @@ public class PerfilFragment extends Fragment {
 
         Log.d("SPINNER", "Items de idioma: " + adapter.getCount());
 
-        // Pre-seleccionar el idioma guardado actual
+
         String idiomaActual = sharedPreferences.getString(KEY_IDIOMA, Locale.getDefault().getLanguage());
         int posicion = 0;
         for (int i = 0; i < codigosIdiomas.length; i++) {
@@ -140,7 +141,6 @@ public class PerfilFragment extends Fragment {
         }
         spinnerIdiomas.setSelection(posicion, false);
 
-        // Listener para la interacción con el Spinner
         spinnerIdiomas.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -153,8 +153,11 @@ public class PerfilFragment extends Fragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
+
     }
 
     private void loadUserData() {

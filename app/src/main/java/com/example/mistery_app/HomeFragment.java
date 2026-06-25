@@ -55,6 +55,11 @@ public class HomeFragment extends Fragment {
         obtenerPublicacionesDesdeLaravel();
     }
 
+    public void filtrarMisteriosPorCategoria(String categoria) {
+        if (adapter != null) {
+            adapter.filtrarPorCategoria(categoria, listaPublicaciones, dataMisterio);
+        }
+    }
     private void actualizarRecycler() {
         if (publicacionesCargadas && misteriosCargados) {
             adapter.setLista(listaPublicaciones, dataMisterio);

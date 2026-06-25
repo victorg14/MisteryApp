@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <queries>
-        <!-- For Google Play Services and Play Store visibility -->
         <package android:name="com.google.android.gms" />
         <package android:name="com.android.vending" />
         <intent>
@@ -16,6 +15,7 @@
     </queries>
 
     <application
+        android:name=".MisteryApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"

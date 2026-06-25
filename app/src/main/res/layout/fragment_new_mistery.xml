@@ -39,7 +39,25 @@
                 android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Área de Imagen con Estilo -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Categoría del Misterio"
+            android:textColorHint="@color/text_secondary"
+            app:boxStrokeColor="@color/mystery_gold"
+            app:hintTextColor="@color/mystery_gold"
+            app:endIconTint="@color/mystery_gold">
+            <AutoCompleteTextView
+            android:id="@+id/spinnerCategoria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textColor="@color/text_primary"
+            android:padding="16dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="200dp"
@@ -98,7 +116,6 @@
                 android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Contenedor dinámico de preguntas -->
         <LinearLayout
             android:id="@+id/contenedorPreguntas"
             android:layout_width="match_parent"
